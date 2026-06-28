@@ -5,6 +5,7 @@ import datetime
 import wikipedia
 import webbrowser
 import os
+from dotenv import load_dotenv  # Add this line
 import smtplib
 import google.generativeai as genai
 
@@ -13,8 +14,20 @@ engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[0].id)
 
-# Configure Google Gemini API
-genai.configure(api_key="AIzaSyCYK68O_OIAu_-9vJDiNJHTfv1cxwOIoaU")
+# --- NEW SECURE ENVIRONMENT LOADING ---
+# Load environment variables from the .env file
+load_dotenv()
+
+# Fetch the API key safely
+gemini_api_key = os.getenv("GOOGLE_API_KEY")
+
+# Fail-safe to ensure the key was found
+if not gemini_api_key:
+    raise ValueError("ERROR: GOOGLE_API_KEY not found. Please check your .env file.")
+
+# Configure Google Gemini API with the secured key
+genai.configure(api_key=gemini_api_key)
+# --------------------------------------
 
 generation_config = {
     "temperature": 1,
